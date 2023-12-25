@@ -13,6 +13,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import jwtConfig from 'src/config/jwt.config';
 import { ConfigType } from '@nestjs/config';
+import { ActiveUserData } from './interface/active-user.interface';
 
 @Injectable()
 export class AuthenticationService {
@@ -30,8 +31,7 @@ export class AuthenticationService {
       user.email = signUpDto.email;
       user.password = await this.hashingService.hash(signUpDto.password);
       user.username = signUpDto.email;
-      const record = await this.usersRepository.save(user);
-      console.log('record', record);
+      await this.usersRepository.save(user);
     } catch (error) {
       if (error.code === '23505') {
         throw new ConflictException();
@@ -42,7 +42,6 @@ export class AuthenticationService {
 
   async signIn(signInDto: SignInDto) {
     try {
-      console.log('signInDto', signInDto);
       const user = await this.usersRepository.findOneBy({
         email: signInDto.email,
       });
@@ -60,7 +59,7 @@ export class AuthenticationService {
         {
           sub: user.id,
           email: user.email,
-        },
+        } as ActiveUserData,
         {
           audience: this.jwtConfiguration.audience,
           issuer: this.jwtConfiguration.issuer,

@@ -6,11 +6,14 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
-import { AuthenticationService } from './authentication.service';
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignInDto } from './dto/sign-in.dto';
 import { Response } from 'express';
+import { Auth } from './decorators/auth.decorators';
+import { AuthType } from './enum/auth-type.enum';
+import { AuthenticationService } from './authentication.service';
+import { SignInDto } from './dto/sign-in.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 
+@Auth(AuthType.None)
 @Controller('authentication')
 export class AuthenticationController {
   constructor(private readonly authService: AuthenticationService) {}
@@ -27,11 +30,11 @@ export class AuthenticationController {
     @Body() signInDto: SignInDto,
   ) {
     const accessToken = await this.authService.signIn(signInDto);
+    console.log('accessToken', accessToken);
     response.cookie('accessToken', accessToken, {
       secure: true,
       httpOnly: true,
       sameSite: true,
     });
-    return { accessToken };
   }
 }

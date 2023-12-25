@@ -6,10 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ActiveUser } from 'src/authentication/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/authentication/interface/active-user.interface';
 
 @Controller('users')
 export class UsersController {
@@ -21,7 +24,8 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
+  findAll(@ActiveUser() user: ActiveUserData) {
+    console.log('user', user);
     return this.usersService.findAll();
   }
 
