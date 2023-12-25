@@ -68,7 +68,7 @@ export class AuthenticationService {
           expiresIn: this.jwtConfiguration.accessTokenTtl,
         } as JwtSignOptions,
       );
-      return { accessToken };
+      return accessToken;
     } catch (error) {
       throw error;
     }

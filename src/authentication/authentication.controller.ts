@@ -32,5 +32,6 @@ export class AuthenticationController {
       httpOnly: true,
       sameSite: true,
     });
+    return { accessToken };
   }
 }
