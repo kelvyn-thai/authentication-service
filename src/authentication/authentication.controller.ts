@@ -29,8 +29,7 @@ export class AuthenticationController {
     @Res({ passthrough: true }) response: Response,
     @Body() signInDto: SignInDto,
   ) {
-    const accessToken = await this.authService.signIn(signInDto);
-    console.log('accessToken', accessToken);
+    const { accessToken } = await this.authService.signIn(signInDto);
     response.cookie('accessToken', accessToken, {
       secure: true,
       httpOnly: true,
