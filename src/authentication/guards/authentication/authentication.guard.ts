@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AccessTokenGuard } from '../access-token/access-token.guard';
+import { AccessTokenGuard } from 'src/authentication/guards/access-token/access-token.guard';
 import { AuthType } from 'src/authentication/enum/auth-type.enum';
 import { AUTH_TYPE_KEY } from 'src/authentication/decorators/auth.decorators';
 
@@ -29,9 +29,7 @@ export class AuthenticationGuard implements CanActivate {
       AUTH_TYPE_KEY,
       [context.getHandler(), context.getClass()],
     ) ?? [AuthenticationGuard.defaultAuthType];
-    console.log('authTypes', authTypes);
     const guards = authTypes.map((type) => this.authTypeGuardMap[type]).flat();
-    console.log('guards', guards);
     let error = new UnauthorizedException();
     for (const instance of guards) {
       const canActivate = await Promise.resolve(

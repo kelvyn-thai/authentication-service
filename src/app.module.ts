@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -21,7 +20,7 @@ import { ConfigModule } from '@nestjs/config';
       database: 'blogs',
       autoLoadEntities: true,
       synchronize: true,
-      entities: [User],
+      logging: true,
     }),
   ],
   controllers: [AppController],
