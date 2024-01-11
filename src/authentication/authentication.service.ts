@@ -9,9 +9,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { randomUUID } from 'crypto';
-import { HashingService } from 'src/hashing/hashing.service';
-import { User } from 'src/users/entities/user.entity';
-import jwtConfig from 'src/config/jwt.config';
+import { HashingService } from '@src/hashing/hashing.service';
+import { User } from '@src/users/entities/user.entity';
+import jwtConfig from '@src/config/jwt.config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ActiveUserData } from './interface/active-user.interface';
 import {
@@ -20,6 +20,8 @@ import {
 } from './refresh-token-ids.storage/refresh-token-ids.storage';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
+import { I18nContext, I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '@src/generated/i18n.generated';
 
 @Injectable()
 export class AuthenticationService {
@@ -30,6 +32,7 @@ export class AuthenticationService {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   async signUp(signUpDto: SignUpDto) {
@@ -37,7 +40,6 @@ export class AuthenticationService {
       const user = new User();
       user.email = signUpDto.email;
       user.password = await this.hashingService.hash(signUpDto.password);
-      await this.usersRepository.save(user);
     } catch (err) {
       const pgUniqueViolationErrorCode = '23505';
       if (err.code === pgUniqueViolationErrorCode) {
@@ -52,14 +54,22 @@ export class AuthenticationService {
       email: signInDto.email,
     });
     if (!user) {
-      throw new UnauthorizedException('User does not exists');
+      throw new UnauthorizedException(
+        this.i18n.t('translate.USER_DOES_NOT_EXISTS', {
+          lang: I18nContext.current().lang,
+        }),
+      );
     }
     const isEqual = await this.hashingService.compare(
       signInDto.password,
       user.password,
     );
     if (!isEqual) {
-      throw new UnauthorizedException('Password does not match');
+      throw new UnauthorizedException(
+        this.i18n.t('translate.PASSWORD_DOES_NOT_MATCH', {
+          lang: I18nContext.current().lang,
+        }),
+      );
     }
     return await this.generateTokens(user);
   }

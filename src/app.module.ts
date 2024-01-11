@@ -1,26 +1,62 @@
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DataSource } from 'typeorm';
+import { HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { appConfigs } from '@src/config';
+import path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { DATABASE_BASE_NAMESPACE } from './config/database.config';
 import { UsersModule } from './users/users.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: appConfigs,
+    }),
     AuthenticationModule,
     UsersModule,
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'blogs',
-      autoLoadEntities: true,
-      synchronize: true,
-      logging: true,
+    TypeOrmModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => {
+        const databaseConfig = configService.get(DATABASE_BASE_NAMESPACE);
+        if (!databaseConfig) {
+          throw new Error('Can not get database configuration!');
+        }
+        return databaseConfig;
+      },
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      dataSourceFactory: async (options) => {
+        try {
+          const dataSource = await new DataSource(options).initialize();
+          return dataSource;
+        } catch (error) {
+          console.log('Error during Data Source initialize');
+          throw new Error(error);
+        }
+      },
+    }),
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      fallbacks: {
+        'en-*': 'en',
+        'vi-*': 'vi',
+      },
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        new QueryResolver(['lang', 'language']),
+        new HeaderResolver(['lang', 'language']),
+      ],
+      typesOutputPath: path.join(
+        __dirname,
+        '../src/generated/i18n.generated.ts',
+      ),
     }),
   ],
   controllers: [AppController],

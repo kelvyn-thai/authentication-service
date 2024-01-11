@@ -5,9 +5,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AccessTokenGuard } from 'src/authentication/guards/access-token/access-token.guard';
-import { AuthType } from 'src/authentication/enum/auth-type.enum';
-import { AUTH_TYPE_KEY } from 'src/authentication/decorators/auth.decorators';
+import { AccessTokenGuard } from '@src/authentication/guards/access-token/access-token.guard';
+import { AuthType } from '@src/authentication/enum/auth-type.enum';
+import { AUTH_TYPE_KEY } from '@src/authentication/decorators/auth.decorators';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
