@@ -8,11 +8,13 @@ export abstract class BaseEntity {
 
   @UpdateDateColumn({
     name: 'updated_at',
+    default: null,
   })
   updatedAt: Date | null;
 
   @DeleteDateColumn({
     name: 'deleted_at',
+    default: null,
   })
   deletedAt: Date | null;
 }

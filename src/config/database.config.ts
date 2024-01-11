@@ -3,6 +3,16 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export const DATABASE_BASE_NAMESPACE = 'database';
 
+export interface DatabaseENV {
+  type: string;
+  host: string;
+  port: number;
+  username: string;
+  password: string;
+  database: string;
+  logging: string;
+}
+
 export default registerAs(DATABASE_BASE_NAMESPACE, () => {
   return {
     type: process.env.DATABASE_TYPE,
