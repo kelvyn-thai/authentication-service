@@ -1,5 +1,6 @@
 import { BaseEntity } from '@src/entities/base.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Role } from '../enums/role.enum';
 
 // Enum to define user genders
 export enum UserGenders {
@@ -65,4 +66,12 @@ export class User extends BaseEntity {
     nullable: true,
   })
   avatar: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.Regular,
+    nullable: false,
+  })
+  role: Role;
 }

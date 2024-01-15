@@ -1,8 +1,8 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { appConfigs } from '@src/config';
 import path from 'path';
 import { AppController } from './app.controller';
@@ -25,13 +25,23 @@ import { UsersModule } from './users/users.module';
         if (!databaseConfig) {
           throw new Error('Can not get database configuration!');
         }
-        return databaseConfig;
+        return {
+          ...databaseConfig,
+          keepAlive: true,
+          retryDelay: 3600,
+          keepConnectionAlive: true,
+          retryAttempts: 3,
+          autoLoadEntities: true,
+        } as TypeOrmModuleOptions;
       },
       imports: [ConfigModule],
       inject: [ConfigService],
-      dataSourceFactory: async (options) => {
+      dataSourceFactory: async (options: DataSourceOptions) => {
         try {
-          const dataSource = await new DataSource(options).initialize();
+          const dataSource: DataSource = await new DataSource(
+            options,
+          ).initialize();
+          console.log('options', options);
           return dataSource;
         } catch (error) {
           console.log('Error during Data Source initialize');

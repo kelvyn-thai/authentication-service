@@ -3,22 +3,25 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Inject,
   Post,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-
 import { Auth } from './decorators/auth.decorators';
 import { AuthType } from './enum/auth-type.enum';
-import { AuthenticationService } from './authentication.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
+import { BaseAuthenticationService } from './services/base-authentication.service';
 
 @Auth(AuthType.None)
 @Controller('authentication')
 export class AuthenticationController {
-  constructor(private readonly authService: AuthenticationService) {}
+  constructor(
+    @Inject(BaseAuthenticationService)
+    private readonly authService: BaseAuthenticationService,
+  ) {}
 
   @Post('sign-up')
   @HttpCode(HttpStatus.CREATED)

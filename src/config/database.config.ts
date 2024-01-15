@@ -1,5 +1,6 @@
+import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { registerAs } from '@nestjs/config';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { defaultDataSourceConfig } from '@src/typeorm/typeorm-cli.config';
 
 export const DATABASE_BASE_NAMESPACE = 'database';
 
@@ -15,18 +16,6 @@ export interface DatabaseENV {
 
 export default registerAs(DATABASE_BASE_NAMESPACE, () => {
   return {
-    type: process.env.DATABASE_TYPE,
-    host: process.env.MYSQL_HOST,
-    port: process.env.MYSQL_PORT,
-    username: process.env.MYSQL_USERNAME,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-    autoLoadEntities: true,
-    synchronize: false, // only 'true' on dev environment
-    retryAttempts: 10,
-    retryDelay: 3600,
-    timezone: 'Z',
-    keepConnectionAlive: true,
-    logging: process.env.MYSQL_LOGGING === 'true',
-  } as TypeOrmModuleOptions;
+    ...defaultDataSourceConfig,
+  } as MysqlConnectionOptions;
 });

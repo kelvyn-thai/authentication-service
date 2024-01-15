@@ -2,10 +2,10 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import 'dotenv/config';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
+import { AddColumnRoleToUserTable1705288490321 } from '@src/migrations/1705288490321-AddColumnRoleToUserTable.migration';
 import { User } from '@src/users/entities/user.entity';
-import path from 'path';
 
-export const defaultConfig: MysqlConnectionOptions = {
+export const defaultDataSourceConfig: MysqlConnectionOptions = {
   type: process.env.DATABASE_TYPE as 'mysql',
   host: process.env.MYSQL_HOST,
   port: Number(process.env.MYSQL_PORT),
@@ -15,12 +15,12 @@ export const defaultConfig: MysqlConnectionOptions = {
   synchronize: false, // only 'true' on dev environment
   logging: true,
   timezone: 'Z',
-  migrationsRun: true,
+  migrationsRun: false,
   migrationsTableName: 'migrations',
-  migrations: [`${path.resolve(__dirname, '../migrations/*.js')}`],
   entities: [User],
+  migrations: [AddColumnRoleToUserTable1705288490321],
 };
 
 export default new DataSource({
-  ...defaultConfig,
+  ...defaultDataSourceConfig,
 });

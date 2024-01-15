@@ -12,30 +12,34 @@ import { randomUUID } from 'crypto';
 import { HashingService } from '@src/hashing/hashing.service';
 import { User } from '@src/users/entities/user.entity';
 import jwtConfig from '@src/config/jwt.config';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { ActiveUserData } from './interface/active-user.interface';
+import { RefreshTokenDto } from '@src/authentication/dto/refresh-token.dto';
+import { ActiveUserData } from '@src/authentication/interface/active-user.interface';
 import {
   InvalidatedRefreshTokenError,
   RefreshTokenIdsStorage,
-} from './refresh-token-ids.storage/refresh-token-ids.storage';
-import { SignInDto } from './dto/sign-in.dto';
-import { SignUpDto } from './dto/sign-up.dto';
+} from '@src/authentication/refresh-token-ids.storage/refresh-token-ids.storage';
+import { SignInDto } from '@src/authentication/dto/sign-in.dto';
+import { SignUpDto } from '@src/authentication/dto/sign-up.dto';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '@src/generated/i18n.generated';
+import { IGenerateTokens } from '../interface/generate-tokens.interface';
+import { BaseAuthenticationService } from './base-authentication.service';
 
 @Injectable()
-export class AuthenticationService {
+export class AuthenticationService implements BaseAuthenticationService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
     private readonly hashingService: HashingService,
-    private readonly jwtService: JwtService,
+    @Inject(JwtService) private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+    @Inject(RefreshTokenIdsStorage)
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
+    @Inject(I18nService<I18nTranslations>)
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  async signUp(signUpDto: SignUpDto) {
+  async signUp(signUpDto: SignUpDto): Promise<void> {
     try {
       const user = new User();
       user.email = signUpDto.email;
@@ -50,7 +54,7 @@ export class AuthenticationService {
     }
   }
 
-  async signIn(signInDto: SignInDto) {
+  async signIn(signInDto: SignInDto): Promise<IGenerateTokens> {
     const user = await this.usersRepository.findOneBy({
       email: signInDto.email,
     });
@@ -94,7 +98,9 @@ export class AuthenticationService {
     };
   }
 
-  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+  async refreshTokens(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<IGenerateTokens> {
     try {
       const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
         Pick<ActiveUserData, 'sub'> & { refreshTokenId: string }

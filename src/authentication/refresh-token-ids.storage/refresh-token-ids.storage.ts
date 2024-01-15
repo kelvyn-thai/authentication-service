@@ -1,10 +1,11 @@
 import {
+  Inject,
   Injectable,
   OnApplicationBootstrap,
   OnApplicationShutdown,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { REDIS_NAMESPACE } from '@src/config/redis.config';
+import { ConfigService, ConfigType } from '@nestjs/config';
+import redisConfig from '@src/config/redis.config';
 import Redis from 'ioredis';
 
 // 💡 Ideally this should be in a separate file - putting this here for brevity
@@ -16,12 +17,15 @@ export class RefreshTokenIdsStorage
 {
   private redisClient: Redis;
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    @Inject(redisConfig.KEY)
+    private readonly redisConfiguration: ConfigType<typeof redisConfig>,
+  ) {}
 
   onApplicationBootstrap() {
     // TODO: Ideally, we should move this to the dedicated "RedisModule"
     // instead of initiating the connection here.
-    this.redisClient = new Redis(this.configService.get(REDIS_NAMESPACE));
+    this.redisClient = new Redis(this.redisConfiguration);
   }
 
   onApplicationShutdown(signal?: string) {
