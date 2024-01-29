@@ -15,6 +15,7 @@ import { RefreshTokenIdsStorage } from './refresh-token-ids.storage/refresh-toke
 import { BaseAuthenticationService } from './services/base-authentication.service';
 import { MockAuthenticationService } from './services/mock-authentication.service';
 import 'dotenv/config';
+import { RolesGuard } from '@src/authorization/roles/roles.guard';
 
 @Module({
   imports: [
@@ -30,6 +31,10 @@ import 'dotenv/config';
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
     RefreshTokenIdsStorage,
     AccessTokenGuard,

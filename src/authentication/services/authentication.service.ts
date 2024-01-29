@@ -22,7 +22,7 @@ import { SignInDto } from '@src/authentication/dto/sign-in.dto';
 import { SignUpDto } from '@src/authentication/dto/sign-up.dto';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '@src/generated/i18n.generated';
-import { IGenerateTokens } from '../interface/generate-tokens.interface';
+import { IGenerateTokens } from '@src/authentication/interface/generate-tokens.interface';
 import { BaseAuthenticationService } from './base-authentication.service';
 
 @Injectable()
@@ -85,7 +85,7 @@ export class AuthenticationService implements BaseAuthenticationService {
       this.signToken<Partial<ActiveUserData>>(
         user.id,
         this.jwtConfiguration.accessTokenTtl,
-        { email: user.email },
+        { email: user.email, role: user.role },
       ),
       this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {
         refreshTokenId,
@@ -109,10 +109,10 @@ export class AuthenticationService implements BaseAuthenticationService {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
       });
-      const user = await this.usersRepository.findOneByOrFail({
+      const user: User = await this.usersRepository.findOneByOrFail({
         id: sub,
       });
-      const isValid = await this.refreshTokenIdsStorage.validate(
+      const isValid: boolean = await this.refreshTokenIdsStorage.validate(
         user.id,
         refreshTokenId,
       );
@@ -131,7 +131,7 @@ export class AuthenticationService implements BaseAuthenticationService {
     }
   }
 
-  private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
+  private async signToken<T>(userId: string, expiresIn: number, payload?: T) {
     return await this.jwtService.signAsync(
       {
         sub: userId,

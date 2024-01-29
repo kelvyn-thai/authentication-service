@@ -3,12 +3,16 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+
 import { appConfigs } from '@src/config';
 import path from 'path';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { CaslModule } from './casl/casl.module';
 import { DATABASE_BASE_NAMESPACE } from './config/database.config';
+import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -41,10 +45,8 @@ import { UsersModule } from './users/users.module';
           const dataSource: DataSource = await new DataSource(
             options,
           ).initialize();
-          console.log('options', options);
           return dataSource;
         } catch (error) {
-          console.log('Error during Data Source initialize');
           throw new Error(error);
         }
       },
@@ -68,6 +70,8 @@ import { UsersModule } from './users/users.module';
         '../src/generated/i18n.generated.ts',
       ),
     }),
+    CaslModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

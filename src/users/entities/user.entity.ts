@@ -1,6 +1,7 @@
 import { BaseEntity } from '@src/entities/base.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Role } from '../enums/role.enum';
+import { Column, Entity } from 'typeorm';
+import { Role } from '@src/users/enums/role.enum';
+import { Expose } from 'class-transformer';
 
 // Enum to define user genders
 export enum UserGenders {
@@ -17,15 +18,15 @@ export enum UserGenders {
   },
 })
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn({})
-  id: number;
+  @Expose()
+  id: string;
 
   // User's username, can be null
   @Column({ type: 'varchar', length: 255, nullable: true })
   username: string | null;
 
   // User's password
-  @Column({ type: 'varchar', length: 64 })
+  @Column({ type: 'varchar', length: 64, select: false })
   password: string;
 
   // User's phone number, nullable

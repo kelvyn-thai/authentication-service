@@ -2,10 +2,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import 'dotenv/config';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
-import { AddColumnRoleToUserTable1705288490321 } from '@src/migrations/1705288490321-AddColumnRoleToUserTable';
 import { User } from '@src/users/entities/user.entity';
-import { AddColumnDOBUserTable1705378723664 } from '@src/migrations/1705378723664-AddColumnDOBUserTable';
-import { AllowUsernameNullUserTable1705391780940 } from '@src/migrations/1705391780940-AllowUsernameNullUserTable';
 
 export const defaultDataSourceConfig: MysqlConnectionOptions = {
   type: process.env.DATABASE_TYPE as 'mysql',
@@ -20,11 +17,7 @@ export const defaultDataSourceConfig: MysqlConnectionOptions = {
   migrationsRun: false,
   migrationsTableName: 'migrations',
   entities: [User],
-  migrations: [
-    AddColumnRoleToUserTable1705288490321,
-    AddColumnDOBUserTable1705378723664,
-    AllowUsernameNullUserTable1705391780940,
-  ],
+  migrations: [],
 };
 
 export default new DataSource({

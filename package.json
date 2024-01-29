@@ -21,9 +21,11 @@
     "dbm:run": "yarn typeorm migration:run -d dist/typeorm/typeorm-cli.config",
     "dbm:revert": "yarn typeorm migration:revert -d dist/typeorm/typeorm-cli.config",
     "migration:run": "yarn build && yarn dbm:run",
-    "migration:revert": "yarn build && yarn dbm:revert"
+    "migration:revert": "yarn build && yarn dbm:revert",
+    "start:repl": "yarn start -- --watch --entryFile repl"
   },
   "dependencies": {
+    "@casl/ability": "^6.5.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
@@ -69,11 +71,7 @@
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.1.3",
-    "dbm": "yarn build && yarn migration:run",
-    "dbm:run": "yarn typeorm migration:run -d dist/typeorm/typeorm-cli.config",
-    "dbm:revert": "yarn typeorm migration:revert -d dist/typeorm/typeorm-cli.config",
-    "dbm:auto-generate": "npx typeorm migration:generate src/migrations/SchemaSync -d dist/typeorm/typeorm-cli.config"
+    "typescript": "^5.1.3"
   },
   "jest": {
     "moduleFileExtensions": [
