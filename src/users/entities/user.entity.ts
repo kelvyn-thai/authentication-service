@@ -2,6 +2,10 @@ import { BaseEntity } from '@src/entities/base.entity';
 import { Column, Entity } from 'typeorm';
 import { Role } from '@src/users/enums/role.enum';
 import { Expose } from 'class-transformer';
+import {
+  Permission,
+  PermissionType,
+} from '@src/authorization/types/permissions.type';
 
 // Enum to define user genders
 export enum UserGenders {
@@ -26,7 +30,7 @@ export class User extends BaseEntity {
   username: string | null;
 
   // User's password
-  @Column({ type: 'varchar', length: 64, select: false })
+  @Column({ type: 'varchar', length: 64 })
   password: string;
 
   // User's phone number, nullable
@@ -71,8 +75,11 @@ export class User extends BaseEntity {
   @Column({
     type: 'enum',
     enum: Role,
-    default: Role.Regular,
+    default: Role.Guest,
     nullable: false,
   })
   role: Role;
+
+  @Column({ enum: Permission, default: [], type: 'json' })
+  permissions: PermissionType[];
 }

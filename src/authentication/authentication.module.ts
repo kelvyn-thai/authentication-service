@@ -15,7 +15,11 @@ import { RefreshTokenIdsStorage } from './refresh-token-ids.storage/refresh-toke
 import { BaseAuthenticationService } from './services/base-authentication.service';
 import { MockAuthenticationService } from './services/mock-authentication.service';
 import 'dotenv/config';
-import { RolesGuard } from '@src/authorization/roles/roles.guard';
+// import { RolesGuard } from '@src/authorization/roles/roles.guard';
+// import { PermisisonGuard } from '@src/authorization/permission/permission.guard';
+import { PoliciesGuard } from '@src/authorization/guard/policies.guard';
+import { PolicyHandlerStorage } from '@src/authorization/storage/policy-handlers.storage';
+import { FrameworkContributorPolicyHandler } from '@src/authorization/policy/framework-contributor.policy';
 
 @Module({
   imports: [
@@ -34,7 +38,9 @@ import { RolesGuard } from '@src/authorization/roles/roles.guard';
     },
     {
       provide: APP_GUARD,
-      useClass: RolesGuard,
+      // useClass: RolesGuard,
+      // useClass: PermisisonGuard,
+      useClass: PoliciesGuard,
     },
     RefreshTokenIdsStorage,
     AccessTokenGuard,
@@ -45,6 +51,8 @@ import { RolesGuard } from '@src/authorization/roles/roles.guard';
           ? MockAuthenticationService
           : AuthenticationService,
     },
+    PolicyHandlerStorage,
+    FrameworkContributorPolicyHandler,
   ],
   controllers: [AuthenticationController],
 })
