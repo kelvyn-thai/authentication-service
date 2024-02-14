@@ -10,18 +10,18 @@ export abstract class BaseEntity {
   id: string;
 
   @CreateDateColumn({
-    name: 'created_at',
+    name: 'createdAt',
   })
   createdAt: Date | null;
 
   @UpdateDateColumn({
-    name: 'updated_at',
+    name: 'updatedAt',
     default: null,
   })
   updatedAt: Date | null;
 
   @DeleteDateColumn({
-    name: 'deleted_at',
+    name: 'deletedAt',
     default: null,
   })
   deletedAt: Date | null;

@@ -4,22 +4,23 @@ import { Policy } from '@src/authorization/interface/policy.interface';
 import { PolicyHandler } from '@src/authorization/interface/policy-handler.inteface';
 import { PolicyHandlerStorage } from '@src/authorization/storage/policy-handlers.storage';
 
-export class FrameworkContributorPolicy implements Policy {
-  name = 'FrameworkContributor';
+export class CarehealthUserPolicy implements Policy {
+  name = 'CareHealthUser';
 }
 
 @Injectable()
-export class FrameworkContributorPolicyHandler
-  implements PolicyHandler<FrameworkContributorPolicy>
+export class CarehealthUserPolicyHandler
+  implements PolicyHandler<CarehealthUserPolicy>
 {
   constructor(private readonly policyHandlerStorage: PolicyHandlerStorage) {
-    this.policyHandlerStorage.add(FrameworkContributorPolicy, this);
+    this.policyHandlerStorage.add(CarehealthUserPolicy, this);
   }
 
   async handle(
-    policy: FrameworkContributorPolicy,
+    policy: CarehealthUserPolicy,
     user: ActiveUserData,
   ): Promise<void> {
+    console.log('user', user);
     const isContributor = user.email.endsWith('@carehealth.io');
     if (!isContributor) {
       throw new Error('User is not belong to our organization');

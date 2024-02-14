@@ -5,7 +5,7 @@ export class AddColumnRoleToUserTable1705288490321
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE users ADD COLUMN role ENUM('Regular', 'Admin') DEFAULT 'Regular' COMMENT 'User roles';
+      `ALTER TABLE users ADD COLUMN role ENUM('Guest', 'Partner', 'Admin') DEFAULT 'Guest' COMMENT 'User roles';
 `,
     );
   }

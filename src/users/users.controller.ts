@@ -7,18 +7,18 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+
+import { CarehealthUserPolicy } from '@src/authorization/policy/carehealth-user.policy';
+import { Permission } from '@src/authorization/types/permissions.type';
+import { Permissions } from '@src/authorization/decorators/permission.decorator';
+import { Policies } from '@src/authorization/decorators/policies.decorator';
+import { Auth } from '@src/authentication/decorators/auth.decorators';
+import { AuthType } from '@src/authentication/enum/auth-type.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-// import { ActiveUser } from '@src/authentication/decorators/active-user.decorator';
-// import { ActiveUserData } from '@src/authentication/interface/active-user.interface';
-// import { Roles } from '@src/authorization/decorators/roles.decorators';
-// import { Role } from './enums/role.enum';
-import { Permissions } from '@src/authorization/decorators/permission.decorator';
-import { Permission } from '@src/authorization/types/permissions.type';
-import { Policies } from '@src/authorization/decorators/policies.decorator';
-import { FrameworkContributorPolicy } from '@src/authorization/policy/framework-contributor.policy';
+import { UsersService } from './users.service';
 
+@Auth(AuthType.Bearer, AuthType.ApiKey)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -36,7 +36,7 @@ export class UsersController {
   //   Permission.Update,
   //   Permission.Delete,
   // ])
-  @Policies(new FrameworkContributorPolicy())
+  @Policies(new CarehealthUserPolicy())
   @Get()
   findAll() {
     return this.usersService.findAll();

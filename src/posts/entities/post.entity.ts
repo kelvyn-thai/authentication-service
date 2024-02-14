@@ -12,7 +12,7 @@ export enum PostStatus {
   name: 'posts',
   database: 'blogs',
   orderBy: {
-    created_at: 'DESC',
+    createdAt: 'DESC',
   },
 })
 export class Post extends BaseEntity {

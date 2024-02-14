@@ -1,11 +1,12 @@
 import { BaseEntity } from '@src/entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany, Relation } from 'typeorm';
 import { Role } from '@src/users/enums/role.enum';
 import { Expose } from 'class-transformer';
 import {
   Permission,
   PermissionType,
 } from '@src/authorization/types/permissions.type';
+import { ApiKey } from '@src/api-key/entities/api-key.entity';
 
 // Enum to define user genders
 export enum UserGenders {
@@ -18,7 +19,7 @@ export enum UserGenders {
   name: 'users',
   database: 'blogs',
   orderBy: {
-    created_at: 'DESC',
+    createdAt: 'DESC',
   },
 })
 export class User extends BaseEntity {
@@ -58,7 +59,6 @@ export class User extends BaseEntity {
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
-    name: 'date_of_birth',
     nullable: true,
   })
   dateOfBirth: Date | null;
@@ -82,4 +82,9 @@ export class User extends BaseEntity {
 
   @Column({ enum: Permission, default: [], type: 'json' })
   permissions: PermissionType[];
+
+  @OneToMany(() => ApiKey, (apiKey) => apiKey.user, {
+    cascade: ['soft-remove', 'remove'],
+  })
+  apiKeys: Relation<ApiKey[]>;
 }

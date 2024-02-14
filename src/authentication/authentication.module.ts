@@ -19,11 +19,14 @@ import 'dotenv/config';
 // import { PermisisonGuard } from '@src/authorization/permission/permission.guard';
 import { PoliciesGuard } from '@src/authorization/guard/policies.guard';
 import { PolicyHandlerStorage } from '@src/authorization/storage/policy-handlers.storage';
-import { FrameworkContributorPolicyHandler } from '@src/authorization/policy/framework-contributor.policy';
+import { CarehealthUserPolicyHandler } from '@src/authorization/policy/carehealth-user.policy';
+import { ApiKeyGuard } from './guards/api-key/api-key.guard';
+import { ApiKey } from '@src/api-key/entities/api-key.entity';
+import { ApiKeyService } from '@src/api-key/api-key.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, ApiKey]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
   ],
@@ -44,6 +47,8 @@ import { FrameworkContributorPolicyHandler } from '@src/authorization/policy/fra
     },
     RefreshTokenIdsStorage,
     AccessTokenGuard,
+    ApiKeyGuard,
+    ApiKeyService,
     {
       provide: BaseAuthenticationService,
       useClass:
@@ -52,7 +57,7 @@ import { FrameworkContributorPolicyHandler } from '@src/authorization/policy/fra
           : AuthenticationService,
     },
     PolicyHandlerStorage,
-    FrameworkContributorPolicyHandler,
+    CarehealthUserPolicyHandler,
   ],
   controllers: [AuthenticationController],
 })

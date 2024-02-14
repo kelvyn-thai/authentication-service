@@ -8,6 +8,6 @@ export class AddColumnPermissionToUserTable1706585012992
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    //
+    await queryRunner.query(`ALTER TABLE users DROP COLUMN permissions`);
   }
 }

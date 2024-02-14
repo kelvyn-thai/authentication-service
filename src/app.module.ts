@@ -14,6 +14,7 @@ import { CaslModule } from './casl/casl.module';
 import { DATABASE_BASE_NAMESPACE } from './config/database.config';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
+import { ApiKeyModule } from './api-key/api-key.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { UsersModule } from './users/users.module';
     }),
     CaslModule,
     PostsModule,
+    ApiKeyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
